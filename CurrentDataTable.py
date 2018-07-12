@@ -11,7 +11,6 @@ def get_html(browser):
     form = browser.find_elements_by_css_selector('#main > div > div:nth-child(3n)')
     html = form[0].get_attribute('innerHTML')
     bs = BeautifulSoup(html, 'html.parser')
-    int_time = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
     cups = bs("table")[0].findAll("tbody")
     return cups
 def parse_the_table(cups):
@@ -66,5 +65,6 @@ browser.get(ref)
 
 #now you can run this chunk of code: usually takes less than 0.2 seconds to run
 x0 = time.time()
+int_time = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
 cups = get_html(browser)
 table = parse_the_table(cups)
