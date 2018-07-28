@@ -1,0 +1,72 @@
+#import everything I need
+#import requests
+import pickle
+#import numpy as np
+import pandas as pd
+#from bs4 import BeautifulSoup
+#from sklearn import datasets, linear_model
+#from sklearn.metrics import mean_squared_error, r2_score
+
+class player: #class for players
+    def __init__(self):
+        self
+class game: #each object - a game between two players
+    def __init__(self):
+        self
+#functions for files    
+def writefile(file, data):
+    with open(file+'.pkl', 'wb') as output:
+        #save = data
+        pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
+        
+def readfile(file):
+    with open(file+'.pkl', 'rb') as input:
+        return(pickle.load(input))  
+        
+df = readfile('plays_pandas')
+#leave only ttligapro tournaments for men
+df = df[df.tournament_name.str.contains('лига')&~df.tournament_name.str.contains('Премьер')\
+                &~df.tournament_name.str.contains('премьер')&~df.tournament_name.str.contains('супер')\
+                &~df.tournament_name.str.contains('Супер')&~df.tournament_name.str.contains('жен')]
+#delete matches that haven't staretd or started, but haven't finished (can't earn money on them anyway)
+df = df[df['score_sets'].str[:]!='0 : 0']
+#string to numeric
+df['id1']=pd.to_numeric(df['id1'])
+df['id2']=pd.to_numeric(df['id2'])
+#dates to day, months, years
+df['day']=pd.to_numeric(df['date'].str[:2])
+df['month']=pd.to_numeric(df['date'].str[3:5])
+df['year']=pd.to_numeric(df['date'].str[6:10])
+df['day1']=pd.to_numeric(df['date1'].str[:2])
+df['month1']=pd.to_numeric(df['date1'].str[3:5])
+df['year1']=pd.to_numeric(df['date1'].str[6:10])
+df['day2']=pd.to_numeric(df['date2'].str[:2])
+df['month2']=pd.to_numeric(df['date2'].str[3:5])
+df['year2']=pd.to_numeric(df['date2'].str[6:10])
+df['fntrday1']=pd.to_numeric(df['fntrdate1'].str[:2])
+df['fntrmonth1']=pd.to_numeric(df['fntrdate1'].str[3:5])
+df['fntryear1']=pd.to_numeric(df['fntrdate1'].str[6:10])
+df['fntrday2']=pd.to_numeric(df['fntrdate2'].str[:2])
+df['fntrmonth2']=pd.to_numeric(df['fntrdate2'].str[3:5])
+df['fntryear2']=pd.to_numeric(df['fntrdate2'].str[6:10])
+#liga
+df['ttligapro_liga']=df['tournament_name'].str[5:]
+#liga minimum rating
+df['ttligapro_liga_rating_min']=df['ttligapro_liga'].str[:3]#find method till specific sign
+#liga maximum rating
+df['ttligapro_liga_rating_max']=df['ttligapro_liga'].str[4:]#find method till specific sign
+#string to numeric
+df['current_rating1']=pd.to_numeric(df['current_rating1'])
+df['current_rating2']=pd.to_numeric(df['current_rating2'])
+df['won_sets']=pd.to_numeric(df['won_sets'])
+df['lost_sets']=pd.to_numeric(df['lost_sets'])
+#df['score_points'] !!!!!
+#string to numeric
+df['rating_delta_for1']=pd.to_numeric(df['rating_delta_for1'])
+#df['fntrrating2']=pd.to_numeric(df['fntrrating2'])
+#df['fntrrating1']=pd.to_numeric(df['fntrrating1'])
+df['dsf']=(pd.to_numeric(df['won_sets'])-pd.to_numeric(df['lost_sets']))
+writefile('plays_pandas_ttligapro_men_last_version',df)#order columns
+
+#df = readfile('plays_pandas_ttligapro_men_last_version')
+#df[(df['rating_delta_for1']>20)&(df['rating_delta_for1']<70)][['rating1','rating2', 'rating_delta_for1']]
