@@ -52,15 +52,21 @@ df['fntryear2']=pd.to_numeric(df['fntrdate2'].str[6:10])
 #liga
 df['ttligapro_liga']=df['tournament_name'].str[5:]
 #liga minimum rating
-df['ttligapro_liga_rating_min']=df['ttligapro_liga'].str[:3]#find method till specific sign
+df['ttligapro_liga_rating_min']=df['ttligapro_liga'].str.split('[- +]', expand=True)[0]
 #liga maximum rating
-df['ttligapro_liga_rating_max']=df['ttligapro_liga'].str[4:]#find method till specific sign
+df['ttligapro_liga_rating_min']=df['ttligapro_liga'].str.split('[- +]', expand=True)[1]
 #string to numeric
 df['current_rating1']=pd.to_numeric(df['current_rating1'])
 df['current_rating2']=pd.to_numeric(df['current_rating2'])
 df['won_sets']=pd.to_numeric(df['won_sets'])
 df['lost_sets']=pd.to_numeric(df['lost_sets'])
-#df['score_points'] !!!!!
+for i in range(1,6): #in these tournaments there are always 5 sets 
+                     #(or less, 3 or 4, if one of the players was much better than the other)
+    df['set_'+str(i)+'_score'] = df['score_points'].str.split().str.get(i-1)
+for i in range(1,6): #in these tournaments there are always 5 sets 
+                     #(or less, 3 or 4, if one of the players was much better than the other)
+    df['set_'+str(i)+'_score_1'] = pd.to_numeric(df['set_'+str(i)+'_score'].str.split('-').str.get(0))
+    df['set_'+str(i)+'_score_2'] = pd.to_numeric(df['set_'+str(i)+'_score'].str.split('-').str.get(1))    
 #string to numeric
 df['rating_delta_for1']=pd.to_numeric(df['rating_delta_for1'])
 #df['fntrrating2']=pd.to_numeric(df['fntrrating2'])
