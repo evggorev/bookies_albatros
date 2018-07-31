@@ -23,11 +23,12 @@ def readfile(file):
     with open(file+'.pkl', 'rb') as input:
         return(pickle.load(input))  
         
-df = readfile('plays_pandas')
+df = readfile('plays_pandas_ttligapro_men_last_version')
 #leave only ttligapro tournaments for men
-df = df[df.tournament_name.str.contains('лига')&~df.tournament_name.str.contains('Премьер')\
+'''df = df[df.tournament_name.str.contains('лига')&~df.tournament_name.str.contains('Премьер')\
                 &~df.tournament_name.str.contains('премьер')&~df.tournament_name.str.contains('супер')\
-                &~df.tournament_name.str.contains('Супер')&~df.tournament_name.str.contains('жен')]
+                &~df.tournament_name.str.contains('Супер')&~df.tournament_name.str.contains('жен')\
+                &~df.sex1.str.contains('ж')&~df.sex2.str.contains('ж')]'''
 #delete matches that haven't staretd or started, but haven't finished (can't earn money on them anyway)
 df = df[df['score_sets'].str[:]!='0 : 0']
 #string to numeric
@@ -66,13 +67,23 @@ for i in range(1,6): #in these tournaments there are always 5 sets
 for i in range(1,6): #in these tournaments there are always 5 sets 
                      #(or less, 3 or 4, if one of the players was much better than the other)
     df['set_'+str(i)+'_score_1'] = pd.to_numeric(df['set_'+str(i)+'_score'].str.split('-').str.get(0))
-    df['set_'+str(i)+'_score_2'] = pd.to_numeric(df['set_'+str(i)+'_score'].str.split('-').str.get(1))    
+    df['set_'+str(i)+'_score_2'] = pd.to_numeric(df['set_'+str(i)+'_score'].str.split('-').str.get(1))   
+    df['set_points_'+str(i)+'_total'] = df['set_'+str(i)+'_score_1'] + df['set_'+str(i)+'_score_2']
+df['total_points'] = df['set_points_1_total']   
+for i in range(2,6):
+    df['total_points'] = df['total_points'].add(df['set_points_'+str(i)+'_total'], fill_value=0)
 #string to numeric
-df['rating_delta_for1']=pd.to_numeric(df['rating_delta_for1'])
-#df['fntrrating2']=pd.to_numeric(df['fntrrating2'])
-#df['fntrrating1']=pd.to_numeric(df['fntrrating1'])
+'''df['rating_delta_for1']=pd.to_numeric(df['rating_delta_for1'])
+df['fntrrating2']=pd.to_numeric(df['fntrrating2'].str.replace('-', '0'))
+df['fntrrating1']=pd.to_numeric(df['fntrrating1'].str.replace('-', '0'))
+df['rating1']=pd.to_numeric(df['rating1'])
+df['rating2']=pd.to_numeric(df['rating2'])
+df['ranking1']=pd.to_numeric(df['ranking1'])
+df['ranking2']=pd.to_numeric(df['ranking2'])
+#minus to 0, since only Курильчик Никита has missing sex data
+df['sex1']=pd.to_numeric(df['sex1'].str.replace('м', '0').replace('ж', '1').replace('-', '0'))
+df['sex2']=pd.to_numeric(df['sex2'].str.replace('м', '0').replace('ж', '1').replace('-', '0'))'''
+#derivatives=)
 df['dsf']=(pd.to_numeric(df['won_sets'])-pd.to_numeric(df['lost_sets']))
-writefile('plays_pandas_ttligapro_men_last_version',df)#order columns
 
-#df = readfile('plays_pandas_ttligapro_men_last_version')
-#df[(df['rating_delta_for1']>20)&(df['rating_delta_for1']<70)][['rating1','rating2', 'rating_delta_for1']]
+writefile('plays_pandas_ttligapro_men_last_version',df)#order columns
