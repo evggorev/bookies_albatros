@@ -38,10 +38,10 @@ df['id2']=pd.to_numeric(df['id2'])
 df['day']=pd.to_numeric(df['date'].str[:2])
 df['month']=pd.to_numeric(df['date'].str[3:5])
 df['year']=pd.to_numeric(df['date'].str[6:10])
-df['day1']=pd.to_numeric(df['date1'].str[:2])
+df['day1']=pd.to_numeric(df['date1'].str.split('-').str[:-2])
 df['month1']=pd.to_numeric(df['date1'].str[3:5])
 df['year1']=pd.to_numeric(df['date1'].str[6:10])
-df['day2']=pd.to_numeric(df['date2'].str[:2])
+df['day2']=pd.to_numeric(df['date2'].str[:2].str.split('-').str[:-2])
 df['month2']=pd.to_numeric(df['date2'].str[3:5])
 df['year2']=pd.to_numeric(df['date2'].str[6:10])
 df['fntrday1']=pd.to_numeric(df['fntrdate1'].str[:2])
@@ -87,3 +87,6 @@ df['sex2']=pd.to_numeric(df['sex2'].str.replace('м', '0').replace('ж', '1').re
 df['dsf']=(pd.to_numeric(df['won_sets'])-pd.to_numeric(df['lost_sets']))
 
 writefile('plays_pandas_ttligapro_men_last_version',df)#order columns
+
+#df = readfile('plays_pandas_ttligapro_men_last_version')
+#df[(df['rating_delta_for1']>20)&(df['rating_delta_for1']<70)][['rating1','rating2', 'rating_delta_for1']]
