@@ -23,7 +23,7 @@ def readfile(file):
     with open(file+'.pkl', 'rb') as input:
         return(pickle.load(input))  
         
-df = readfile('plays_pandas_ttligapro_men_last_version')
+df = readfile('plays_pandas')
 #leave only ttligapro tournaments for men
 '''df = df[df.tournament_name.str.contains('лига')&~df.tournament_name.str.contains('Премьер')\
                 &~df.tournament_name.str.contains('премьер')&~df.tournament_name.str.contains('супер')\
